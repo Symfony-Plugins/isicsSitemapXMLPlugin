@@ -17,18 +17,8 @@ The isicsSitemapXMLPlugin is licensed under the GNU Lesser General Public Licens
   * Install the plugin:
 
         [plain]
-        $ symfony plugin-install http://plugins.symfony-project.com/isicsSitemapXMLPlugin
+        $ symfony plugin:install isicsSitemapXMLPlugin
         $ symfony cc
-
-  * Modify the .htaccess file to redirect sitemap.xml to front controller:
- 
-        [plain]
-        # we skip all files with .something
-        # comment the following 3 lines to allow periods in routes
-        RewriteCond %{REQUEST_URI} \..+$
-        RewriteCond %{REQUEST_URI} !\.html$
-        RewriteCond %{REQUEST_URI} !sitemap\.xml$
-        RewriteRule .* - [L]
 
 ## Usage
 
