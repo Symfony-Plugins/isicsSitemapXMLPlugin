@@ -20,6 +20,5 @@
  
 if (in_array('isicsSitemapXML', sfConfig::get('sf_enabled_modules')) && sfConfig::get('app_isicsSitemapXML_route_register', true))
 {
-  $r = sfRouting::getInstance();
-  $r->prependRoute('isics_sitemap_xml', '/sitemap.xml', array('module' => 'isicsSitemapXML', 'action' => 'index'));
+  $this->dispatcher->connect('routing.load_configuration', array('isicsSitemapXMLRouting', 'listenToRoutingLoadConfigurationEvent'));
 }

@@ -2,7 +2,7 @@
 /* 
  * This file is part of the isicsSitemapXMLPlugin package.
  * 
- * Copyright (C) 2007-2008 ISICS.fr <contact@isics.fr>
+ * Copyright (C) 2007-2009 ISICS.fr <contact@isics.fr>
  * 
  * isicsSitemapXMLPlugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -44,38 +44,13 @@ class BaseisicsSitemapXMLActions extends sfActions
       $changefreq = array_key_exists('changefreq', $url) ? $url['changefreq'] : null;
       $priority   = array_key_exists('priority', $url) ? $url['priority'] : null;
       
-      $this->urls[] = new sitemapURL($url['loc'], $lastmod, $changefreq, $priority);
+      $this->urls[] = new isicsSitemapURL($url['loc'], $lastmod, $changefreq, $priority);
     }
     $this->addDefaultUrls();    
-    
-    // Adding modules urls
-    foreach (sfConfig::get('app_isicsSitemapXML_modules', array()) as $module)
-    {
-      // Looking for class in app module
-      if (file_exists($path = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $module . 'SitemapGenerator.class.php'))
-      {
-        require_once($path);
-      }
-      // Looking for class in plugins modules
-      else
-      {
-        $files = glob(sfConfig::get('sf_plugins_dir') . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $module . 'SitemapGenerator.class.php');
-        if (!empty($files))
-        {
-          foreach ($files as $file)
-          {
-            require_once($file);
-          }
-        }
-        // Class not found
-        else
-        {
-          continue;
-        }
-      }
-      
-      $this->urls = array_merge($this->urls, call_user_func(array($module . 'SitemapGenerator', 'generate')));
-    }
+
+    // Adding other urls
+    $dispatcher = sfContext::getInstance()->getEventDispatcher();
+    $this->urls = $dispatcher->filter(new sfEvent($this, 'isicsSitemapXML.filter_urls'), $this->urls)->getReturnValue();
   }
   
 }

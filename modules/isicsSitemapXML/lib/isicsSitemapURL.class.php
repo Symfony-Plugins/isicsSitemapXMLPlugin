@@ -2,7 +2,7 @@
 /* 
  * This file is part of the isicsSitemapXMLPlugin package.
  * 
- * Copyright (C) 2007-2008 ISICS.fr <contact@isics.fr>
+ * Copyright (C) 2007-2009 ISICS.fr <contact@isics.fr>
  * 
  * isicsSitemapXMLPlugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,7 @@
  * along with isicsSitemapXMLPlugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class sitemapURL
+class isicsSitemapURL
 {
 
   protected $loc        = null;

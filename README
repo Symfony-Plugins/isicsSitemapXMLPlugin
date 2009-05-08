@@ -32,30 +32,33 @@ The isicsSitemapXMLPlugin is licensed under the GNU Lesser General Public Licens
 
 ## Usage
 
-### Extending a module (nothing to do if the module is already "isicsSitemapXMLPlugin compatible")
-
-Each module who has to add urls to sitemap.xml must implements the sitemapGenerator interface.
-The interface contains a generate() method to implement in a file named MODULENAME/lib/MODULENAMESitemapGenerator.class.php.
+Each module who has to add urls to sitemap.xml must listen to isicsSitemapXML.filter_urls event.
 
 For instance, we take a news module.
+
+In config.php, we declare the listener :
+
+    [php]        
+    $this->dispatcher->connect('isicsSitemapXML.filter_urls', array('newsTools', 'filterUrls'));
+    
 In news module lib dir, we create the file newsSitemapGenerator.class.php:
 
     [php]
-    <?php
     class newsSitemapGenerator implements sitemapGenerator
     {
-      public static function generate()
+      /**
+       * Listens to the isicsSitemapXML.filter_urls event.
+       *
+       * @param  sfEvent $event  An sfEvent instance
+       * @param  array   $urls   An array of urls to filter
+       *
+       * @return array   The filtered urls array
+       */
+      public static function filterUrls(sfEvent $event, $urls)
       {
-        $urls = array();  
-  
-        $c = new Criteria();
-        $c->addDescendingOrderByColumn(NewsArticlePeer::PUBLISH_UP);
-    
-        $articles = NewsArticlePeer::doSelect($c);
-
-        foreach ($articles as $article)
+        foreach (NewsArticlePeer::getPublished() as $article)
         {
-          $urls[] = new sitemapURL('@news_article?slug=' . $article->getSlug(), $article->getPublishUp('c'));
+          $urls[] = new sitemapURL('@news_article?slug='.$article->getSlug(), $article->getPublishUp('c'));
         }
 
         return $urls;    
@@ -63,14 +66,6 @@ In news module lib dir, we create the file newsSitemapGenerator.class.php:
     }
 
 ``Note the 'c' value of getPublishUp() param to get an ISO 8601 date.``
-
-### Configuration
-Enable the modules in app.yml:
-
-    [plain]
-    all:
-      isicsSitemapXML:
-      modules:       [ news ]
 
 Just enjoy!!
 
@@ -106,13 +101,13 @@ You can add default urls by 2 ways:
             $this->urls[] = new sitemapURL('mymodule1/myaction2', null, 'never', 1);
           }
         }
- 
-## Roadmap
 
-  * Manage multiple Sitemaps and a Sitemap index (for sites with more than 50 000 URLs)
-  * Rewrite using sfEvent (sf >= 1.1)
 
 ## Changelog
+
+### 2009-05-08 | 2.0.0
+
+  * New version for Symfony 1.2 based on events
 
 ### 2008-09-11 | 0.9.1-beta
 
