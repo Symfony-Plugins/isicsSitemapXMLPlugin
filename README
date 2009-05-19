@@ -2,7 +2,7 @@
 
 The isicsSitemapXMLPlugin provides an easy way to generate a sitemap.xml.
 
-Each module (from plugins or not) who implements the sitemapGenerator interface adds automatically its owns urls.
+Each module (from plugins or not) who implements a listener to isicsSitemapXML.filter_urls event adds automatically its owns urls.
 
 ## Features
   * Quick to use (nothing to do if the module already implements the interface)
