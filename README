@@ -26,12 +26,12 @@ Each module who has to add urls to sitemap.xml must listen to isicsSitemapXML.fi
 
 For instance, we take a news module.
 
-In config.php, we declare the listener :
+In config.php, we declare the listener:
 
     [php]        
     $this->dispatcher->connect('isicsSitemapXML.filter_urls', array('NewsTools', 'filterUrls'));
     
-We add the listener :
+We add the listener:
 
     [php]
     /**
@@ -54,7 +54,14 @@ We add the listener :
 
 ``Note the 'c' value of getPublishUp() param to get an ISO 8601 date.``
 
-Just enjoy!!
+Enabled isicsSitemapXML module in your settings.yml:
+
+    [plain]
+    all:
+      .settings:    
+        enabled_modules: [default, isicsSitemapXML]
+
+You can now see your sitemap.xml in /sitemap.xml. Just enjoy!!
 
 ### Add default urls
 
@@ -91,7 +98,7 @@ You can add default urls by 2 ways:
 
 ## Changelog
 
-### 2009-05-019 | 2.0.1
+### 2009-05-19 | 2.0.2
 
   * Fixed README
   * Updated package.xml
