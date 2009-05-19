@@ -29,30 +29,27 @@ For instance, we take a news module.
 In config.php, we declare the listener :
 
     [php]        
-    $this->dispatcher->connect('isicsSitemapXML.filter_urls', array('newsTools', 'filterUrls'));
+    $this->dispatcher->connect('isicsSitemapXML.filter_urls', array('NewsTools', 'filterUrls'));
     
-In news module lib dir, we create the file newsSitemapGenerator.class.php:
+We add the listener :
 
     [php]
-    class newsSitemapGenerator implements sitemapGenerator
+    /**
+     * Listens to the isicsSitemapXML.filter_urls event.
+     *
+     * @param  sfEvent $event  An sfEvent instance
+     * @param  array   $urls   An array of urls to filter
+     *
+     * @return array   The filtered urls array
+     */
+    public static function filterUrls(sfEvent $event, $urls)
     {
-      /**
-       * Listens to the isicsSitemapXML.filter_urls event.
-       *
-       * @param  sfEvent $event  An sfEvent instance
-       * @param  array   $urls   An array of urls to filter
-       *
-       * @return array   The filtered urls array
-       */
-      public static function filterUrls(sfEvent $event, $urls)
+      foreach (NewsArticlePeer::getPublished() as $article)
       {
-        foreach (NewsArticlePeer::getPublished() as $article)
-        {
-          $urls[] = new sitemapURL('@news_article?slug='.$article->getSlug(), $article->getPublishUp('c'));
-        }
-
-        return $urls;    
+        $urls[] = new sitemapURL('@news_article?slug='.$article->getSlug(), $article->getPublishUp('c'));
       }
+
+      return $urls;    
     }
 
 ``Note the 'c' value of getPublishUp() param to get an ISO 8601 date.``
@@ -63,7 +60,7 @@ Just enjoy!!
 
 You can add default urls by 2 ways:
 
-  1.  Using configuration:
+  1. Using configuration:
 
         [plain]
         all:
@@ -77,10 +74,9 @@ You can add default urls by 2 ways:
                 changefreq: never
                 priority:   1
 
-  2.  Redifining addDefaultUrls() method:
+  2. Redifining addDefaultUrls() method:
 
         [php]
-        <?php
         require_once(dirname(__FILE__).'/../../../plugins/isicsSitemapXMLPlugin/modules/isicsSitemapXML/lib/BaseisicsSitemapXMLActions.class.php');
 
         class isicsSitemapXMLActions extends BaseisicsSitemapXMLActions
@@ -94,6 +90,11 @@ You can add default urls by 2 ways:
 
 
 ## Changelog
+
+### 2009-05-019 | 2.0.1
+
+  * Fixed README
+  * Updated package.xml
 
 ### 2009-05-08 | 2.0.0
 
